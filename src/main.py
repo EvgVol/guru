@@ -4,6 +4,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from src.routers.users_routers import router as users_router
 from src.schemas.users import User
+from fastapi_pagination import add_pagination
+from fastapi_pagination.utils import disable_installed_extensions_check
 
 
 @asynccontextmanager
@@ -19,3 +21,5 @@ app = FastAPI(lifespan=lifespan)
 
 
 app.include_router(users_router, tags=["Users"])
+add_pagination(app)
+disable_installed_extensions_check()
