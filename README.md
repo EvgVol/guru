@@ -15,6 +15,7 @@
 - Requests
 - Pydantic
 - SQLModel
+- Sqlalchemy
 
 ## Как запустить микросервис
 

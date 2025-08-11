@@ -1,10 +1,9 @@
 from sqlmodel import Field, SQLModel
-from pydantic import EmailStr, HttpUrl
 
 
 class User(SQLModel, table=True):
-    id: int = Field(..., primary_key=True)
-    email: EmailStr = Field(...)
-    first_name: str = Field(...)
-    last_name: str = Field(...)
-    avatar: HttpUrl | None = Field(None)
+    id: int | None = Field(default=None, primary_key=True)
+    email: str = Field(nullable=False)
+    first_name: str = Field(nullable=False)
+    last_name: str = Field(nullable=False)
+    avatar: str | None = Field(default=None, nullable=True)

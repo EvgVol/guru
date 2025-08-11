@@ -1,25 +1,23 @@
-import json
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+
+from src.database import create_db_and_tables
 from src.routers.users_routers import router as users_router
-from src.schemas.users import User
+from src.routers.health import router as health_router
 from fastapi_pagination import add_pagination
-from fastapi_pagination.utils import disable_installed_extensions_check
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    with open("users.json", "r") as f:
-        users_data = json.load(f)
-    validated_users = [User.model_validate(user) for user in users_data]
-    app.state.users = validated_users
+    create_db_and_tables()
     yield
 
 
 app = FastAPI(lifespan=lifespan)
 
 
+app.include_router(health_router, tags=["Health Service"])
 app.include_router(users_router, tags=["Users"])
+
 add_pagination(app)
-disable_installed_extensions_check()
