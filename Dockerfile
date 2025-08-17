@@ -5,5 +5,5 @@ COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.create false \
     && poetry install --without dev --no-interaction --no-ansi
 COPY . .
-ENV PYTHONPATH=/app
+ENV PYTHONPATH=/app/src
 CMD ["poetry", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
