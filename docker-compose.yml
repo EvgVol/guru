@@ -1,14 +1,26 @@
 
 services:
 
+  app:
+    build: .
+    container_name: fast_app
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      APP_URL: http://127.0.0.1:8000
+      DATABASE_URL: postgresql+psycopg2://postgres:example@db:5432/postgres
+      DATABASE_POOL_SIZE: 10
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
   db:
     image: postgres
+    container_name: postgres_db
     restart: always
     shm_size: 128mb
-
-    environment:
-      POSTGRES_PASSWORD: example
-
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
