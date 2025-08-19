@@ -7,11 +7,14 @@ from src.schemas.users import User
 
 
 class TestGetUsers:
-    @pytest.mark.parametrize("user_id", [2, 4, 5])
-    def test_get_user(self, app_url, user_id):
+    def test_get_user(
+        self, app_url, create_user, data_new_user, delete_user_by_id
+    ):
         """
         Ответ эндпоинта /api/v1/user/{user_id} должен быть 200.
         """
+        user_id = create_user.json().get("id")
+        delete_user_by_id.update({"user_id": user_id})
         url = f"{app_url}/api/v1/users/{user_id}"
 
         response = requests.get(url)
@@ -46,10 +49,16 @@ class TestGetUsers:
         assert isinstance(response.json()["items"], list)
 
     @pytest.mark.parametrize("size", [1, 2])
-    def test_count_users_in_response(self, app_url, size):
+    def test_count_users_in_response(
+        self, app_url, size, create_user, delete_user_by_id
+    ):
         """
         Соответствие количества пользователей в ответе.
         """
+        user_id1 = create_user.json().get("id")
+        delete_user_by_id.update({"user_id": user_id1})
+        user_id2 = create_user.json().get("id")
+        delete_user_by_id.update({"user_id": user_id2})
         url = f"{app_url}/api/v1/users"
         params = {"size": size}
 
