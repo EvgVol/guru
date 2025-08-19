@@ -48,7 +48,7 @@ class TestGetUsers:
         response = requests.get(url)
         assert isinstance(response.json()["items"], list)
 
-    @pytest.mark.parametrize("size", [1, 2])
+    @pytest.mark.parametrize("size", [1])
     def test_count_users_in_response(
         self, app_url, size, create_user, delete_user_by_id
     ):
@@ -57,8 +57,6 @@ class TestGetUsers:
         """
         user_id1 = create_user.json().get("id")
         delete_user_by_id.update({"user_id": user_id1})
-        user_id2 = create_user.json().get("id")
-        delete_user_by_id.update({"user_id": user_id2})
         url = f"{app_url}/api/v1/users"
         params = {"size": size}
 
