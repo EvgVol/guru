@@ -1,24 +1,21 @@
 from http import HTTPStatus
 import pytest
 
-import requests
-
-from src.schemas.users import UserCreate
+from app.schemas.users import UserCreate
 
 
 class TestCreateUser:
     def test_success_create_user(
-        self, app_url, data_new_user: UserCreate, delete_user_by_id
+        self, guru_service, data_new_user: UserCreate, delete_user_by_id
     ) -> None:
         """
         Успешное создание пользователя.
         """
-        url = f"{app_url}/api/v1/users/"
 
-        response = requests.post(
+        url = "/api/v1/users/"
+        response = guru_service.post(
             url, json=data_new_user.model_dump(mode="json")
         )
-        response.raise_for_status()
         delete_user_by_id.update({"user_id": response.json().get("id")})
         assert response.status_code == HTTPStatus.CREATED
 
@@ -48,7 +45,7 @@ class TestCreateUser:
     )
     def test_fail_create_user(
         self,
-        app_url,
+        guru_service,
         data_new_user: UserCreate,
         invalid_payload,
         expected_status: HTTPStatus,
@@ -56,8 +53,8 @@ class TestCreateUser:
         """
         Ошибка при создании пользователя.
         """
-        url = f"{app_url}/api/v1/users/"
+        url = "/api/v1/users/"
         invalid_data = invalid_payload(data_new_user)
 
-        response = requests.post(url, json=invalid_data)
+        response = guru_service.post(url, json=invalid_data)
         assert response.status_code == expected_status

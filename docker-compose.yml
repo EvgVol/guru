@@ -27,6 +27,7 @@ services:
       POSTGRES_PASSWORD:
       DB_HOST:
       DB_PORT:
+      ENVIRONMENT:
     ports:
       - "5432:5432"
 
