@@ -9,3 +9,10 @@ class User(BaseModel):
     first_name: str
     last_name: str
     avatar: HttpUrl
+
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    first_name: str
+    last_name: str
+    avatar: str

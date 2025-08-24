@@ -1,0 +1,57 @@
+name: Main workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - uses: Gr1N/setup-poetry@v8
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+
+      - run: poetry install
+
+      - name: Create .env file
+        run: |
+          echo "APP_URL=${{ secrets.APP_URL }}" >> .env
+          echo "DB_ENGINE=${{ secrets.DB_ENGINE }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DATABASE_POOL_SIZE=${{ secrets.DATABASE_POOL_SIZE }}" >> .env
+
+      - name: Run docker compose
+        run: docker compose up -d --build
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..10}; do
+            if docker exec postgres_db pg_isready -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.DB_NAME }}; then
+              echo "Postgres ready!"
+              break
+            fi
+            echo "Waiting for Postgres..."
+            sleep 5
+          done
+
+      - name: Run tests
+        run: poetry run pytest .
+        env:
+          DATABASE_URL: ${{ secrets.DB_ENGINE }}://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.DB_NAME }}
