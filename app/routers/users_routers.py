@@ -3,9 +3,9 @@ from http import HTTPStatus
 from fastapi import APIRouter
 from fastapi_pagination import Page, paginate
 
-from src.database import SessionDep
-from src.repositories.users_repository import UsersRepository
-from src.schemas.users import User, UserCreate
+from app.database import SessionDep
+from app.repositories.users_repository import UsersRepository
+from app.schemas.users import User, UserCreate
 
 router = APIRouter(prefix="/api/v1/users")
 

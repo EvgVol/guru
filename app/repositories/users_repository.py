@@ -1,5 +1,5 @@
-from src.common.repository import BaseRepository
-from src.models.users import User
+from app.common.repository import BaseRepository
+from app.models.users import User
 from sqlmodel import Session
 
 

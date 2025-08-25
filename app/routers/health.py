@@ -2,8 +2,8 @@ from http import HTTPStatus
 
 from fastapi import APIRouter
 
-from src.database import check_availability
-from src.schemas.app import DatabaseStatus
+from app.database import check_availability
+from app.schemas.app import DatabaseStatus
 
 
 router = APIRouter(prefix="/health")
